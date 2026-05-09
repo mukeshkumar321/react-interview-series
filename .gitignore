@@ -1,36 +1,6 @@
-# Node modules
-node_modules/
-
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Environment files
+node_modules
+dist
+build
 .env
-.env.local
-
-# VS Code
-.vscode/
-
-# Build folders
-dist/
-build/
-
-# Coverage
-coverage/
-
-# Temporary files
-*.tmp
-*.temp
-
-# Mac system files
-.AppleDouble
-.LSOverride
-
-# Windows system files
-Desktop.ini
+.DS_Store
+coverage
