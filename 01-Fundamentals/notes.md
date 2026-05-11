@@ -30,7 +30,7 @@
 
 ---
 
-# 1. Introduction to React
+## 1. Introduction to React
 
 React is a JavaScript library used for building user interfaces, especially Single Page Applications (SPAs).
 
@@ -38,7 +38,7 @@ It was created by Facebook (Meta) and helps developers build fast, scalable, and
 
 ---
 
-## Key Features of React
+### Key Features of React
 
 - Component-Based Architecture
 - Declarative UI
@@ -50,7 +50,7 @@ It was created by Facebook (Meta) and helps developers build fast, scalable, and
 
 ---
 
-## Basic Example
+### Basic Example
 
 ```jsx
 function App() {
@@ -60,7 +60,7 @@ function App() {
 
 ---
 
-# 2. Why React is Used
+## 2. Why React is Used
 
 Before React, developers manually updated the DOM using JavaScript, which became difficult in large applications.
 
@@ -74,9 +74,9 @@ React solves many frontend problems by improving:
 
 ---
 
-## Problems React Solves
+### Problems React Solves
 
-### Manual DOM Manipulation
+#### Manual DOM Manipulation
 
 Traditional JavaScript:
 
@@ -88,7 +88,7 @@ React automatically updates the UI when data changes.
 
 ---
 
-### Reusable UI
+#### Reusable UI
 
 ```jsx
 <Button />
@@ -98,15 +98,15 @@ React automatically updates the UI when data changes.
 
 ---
 
-### Efficient Updates
+#### Efficient Updates
 
 React updates only changed parts of the UI instead of reloading the entire page.
 
 ---
 
-# 3. SPA vs MPA
+## 3. SPA vs MPA
 
-## Single Page Application (SPA)
+### Single Page Application (SPA)
 
 A Single Page Application loads a single HTML page and dynamically updates content without refreshing the page.
 
@@ -114,7 +114,7 @@ React applications are typically SPAs.
 
 ---
 
-## Characteristics of SPA
+### Characteristics of SPA
 
 - Faster navigation
 - No full-page reload
@@ -123,7 +123,7 @@ React applications are typically SPAs.
 
 ---
 
-## Multi Page Application (MPA)
+### Multi Page Application (MPA)
 
 A Multi Page Application reloads an entirely new page from the server on every navigation.
 
@@ -131,7 +131,7 @@ Traditional websites mostly use MPA architecture.
 
 ---
 
-## SPA vs MPA Comparison
+### SPA vs MPA Comparison
 
 | Feature | SPA | MPA |
 |---|---|---|
@@ -143,9 +143,9 @@ Traditional websites mostly use MPA architecture.
 
 ---
 
-# 4. Declarative vs Imperative Programming
+## 4. Declarative vs Imperative Programming
 
-## Imperative Programming
+### Imperative Programming
 
 Imperative programming focuses on step-by-step instructions.
 
@@ -162,7 +162,7 @@ The developer manually controls DOM updates.
 
 ---
 
-## Declarative Programming
+### Declarative Programming
 
 Declarative programming focuses on describing the desired UI.
 
@@ -176,7 +176,7 @@ React handles DOM updates automatically.
 
 ---
 
-## Why React Uses Declarative UI
+### Why React Uses Declarative UI
 
 Benefits:
 
@@ -187,7 +187,7 @@ Benefits:
 
 ---
 
-# 5. What is JSX?
+## 5. What is JSX?
 
 JSX stands for JavaScript XML.
 
@@ -195,7 +195,7 @@ It allows developers to write HTML-like syntax inside JavaScript.
 
 ---
 
-## JSX Example
+### JSX Example
 
 ```jsx
 const element = <h1>Hello JSX</h1>;
@@ -207,7 +207,7 @@ JSX is converted into JavaScript during compilation.
 
 ---
 
-## JSX Behind the Scenes
+### JSX Behind the Scenes
 
 JSX:
 
@@ -229,9 +229,9 @@ jsx("h1", { children: "Hello" });
 
 ---
 
-## JSX Rules
+### JSX Rules
 
-### JSX Must Return a Single Parent Element
+#### JSX Must Return a Single Parent Element
 
 ❌ Wrong
 
@@ -255,7 +255,7 @@ return (
 
 ---
 
-### Use `className` Instead of `class`
+#### Use `className` Instead of `class`
 
 ```jsx
 <div className="container"></div>
@@ -263,7 +263,7 @@ return (
 
 ---
 
-### JavaScript Inside JSX Uses Curly Braces
+#### JavaScript Inside JSX Uses Curly Braces
 
 ```jsx
 const name = "React";
@@ -273,7 +273,7 @@ const name = "React";
 
 ---
 
-### JSX Prevents XSS Attacks by Default
+#### JSX Prevents XSS Attacks by Default
 
 ```jsx
 const userInput = "<script>alert('hack')</script>";
@@ -285,9 +285,9 @@ React escapes dangerous values automatically.
 
 ---
 
-# More JSX Rules
+## More JSX Rules
 
-## Self Closing Tags
+### Self Closing Tags
 
 ```jsx
 <img src="image.png" />
@@ -297,7 +297,7 @@ All JSX tags must be properly closed.
 
 ---
 
-## JSX Comments
+### JSX Comments
 
 ```jsx
 {
@@ -307,7 +307,7 @@ All JSX tags must be properly closed.
 
 ---
 
-## Inline Styles in JSX
+### Inline Styles in JSX
 
 ```jsx
 <div style={{ color: "red", fontSize: "20px" }}>
@@ -317,7 +317,7 @@ All JSX tags must be properly closed.
 
 ---
 
-## Boolean Values in JSX
+### Boolean Values in JSX
 
 ```jsx
 const isLoggedIn = true;
@@ -329,7 +329,7 @@ React does not render boolean values directly.
 
 ---
 
-## Null and Undefined Rendering
+### Null and Undefined Rendering
 
 ```jsx
 <div>{null}</div>
@@ -340,13 +340,13 @@ React ignores them during rendering.
 
 ---
 
-# Conditional Rendering
+## Conditional Rendering
 
 Conditional rendering means displaying UI based on conditions.
 
 ---
 
-## Using if/else
+### Using if/else
 
 ```jsx
 function App() {
@@ -362,7 +362,7 @@ function App() {
 
 ---
 
-## Using Ternary Operator
+### Using Ternary Operator
 
 ```jsx
 <h1>{isLoggedIn ? "Welcome" : "Login"}</h1>
@@ -370,7 +370,7 @@ function App() {
 
 ---
 
-## Using Logical AND Operator
+### Using Logical AND Operator
 
 ```jsx
 {isAdmin && <button>Delete</button>}
@@ -378,7 +378,7 @@ function App() {
 
 ---
 
-## Early Return Pattern
+### Early Return Pattern
 
 ```jsx
 if (!data) return <h1>Loading...</h1>;
@@ -386,13 +386,13 @@ if (!data) return <h1>Loading...</h1>;
 
 ---
 
-# Rendering Lists
+## Rendering Lists
 
 React commonly renders lists using `.map()`.
 
 ---
 
-## Example
+### Example
 
 ```jsx
 const users = ["A", "B", "C"];
@@ -410,9 +410,9 @@ function App() {
 
 ---
 
-# 6. How JSX Works Internally
+## 6. How JSX Works Internally
 
-## JSX Compilation Flow
+### JSX Compilation Flow
 
 ```text
 JSX
@@ -430,7 +430,7 @@ Real DOM
 
 ---
 
-## React Element Object
+### React Element Object
 
 ```jsx
 const element = <h1>Hello</h1>;
@@ -451,9 +451,9 @@ React elements are plain JavaScript objects.
 
 ---
 
-# 7. Virtual DOM vs Real DOM
+## 7. Virtual DOM vs Real DOM
 
-# Real DOM
+## Real DOM
 
 The Real DOM is the actual browser DOM.
 
@@ -461,7 +461,7 @@ Updating the Real DOM directly is expensive because the browser must recalculate
 
 ---
 
-# Virtual DOM
+## Virtual DOM
 
 The Virtual DOM is a lightweight JavaScript representation of the Real DOM.
 
@@ -469,7 +469,7 @@ React first updates the Virtual DOM and then efficiently updates only necessary 
 
 ---
 
-## Virtual DOM Update Process
+### Virtual DOM Update Process
 
 ```text
 State Change
@@ -485,7 +485,7 @@ Update Real DOM Efficiently
 
 ---
 
-## Example
+### Example
 
 Initial UI:
 
@@ -503,7 +503,7 @@ React updates only the changed text node.
 
 ---
 
-## Advantages of Virtual DOM
+### Advantages of Virtual DOM
 
 - Faster updates
 - Better performance
@@ -512,7 +512,7 @@ React updates only the changed text node.
 
 ---
 
-# 8. What are Components?
+## 8. What are Components?
 
 Components are reusable building blocks in React.
 
@@ -520,13 +520,13 @@ Each component returns a piece of UI.
 
 ---
 
-# Component-Based Architecture
+## Component-Based Architecture
 
 React applications are built using independent reusable components.
 
 ---
 
-## Advantages
+### Advantages
 
 - Reusability
 - Better organization
@@ -536,7 +536,7 @@ React applications are built using independent reusable components.
 
 ---
 
-## Functional Component
+### Functional Component
 
 ```jsx
 function Welcome() {
@@ -546,7 +546,7 @@ function Welcome() {
 
 ---
 
-# Component Composition
+## Component Composition
 
 Large UIs can be broken into smaller reusable components.
 
@@ -560,7 +560,7 @@ Large UIs can be broken into smaller reusable components.
 
 ---
 
-## Benefits of Components
+### Benefits of Components
 
 - Reusability
 - Better code organization
@@ -569,9 +569,9 @@ Large UIs can be broken into smaller reusable components.
 
 ---
 
-# 9. Functional vs Class Components
+## 9. Functional vs Class Components
 
-# Functional Components
+## Functional Components
 
 ```jsx
 function App() {
@@ -581,7 +581,7 @@ function App() {
 
 ---
 
-## Features
+### Features
 
 - Simpler syntax
 - Hooks support
@@ -590,7 +590,7 @@ function App() {
 
 ---
 
-# Class Components
+## Class Components
 
 ```jsx
 class App extends React.Component {
@@ -602,7 +602,7 @@ class App extends React.Component {
 
 ---
 
-## Differences
+### Differences
 
 | Feature | Functional | Class |
 |---|---|---|
@@ -614,7 +614,7 @@ class App extends React.Component {
 
 ---
 
-# 10. What are Props?
+## 10. What are Props?
 
 Props (Properties) are used to pass data from parent to child components.
 
@@ -622,7 +622,7 @@ Props are read-only.
 
 ---
 
-## Example
+### Example
 
 ```jsx
 function User(props) {
@@ -636,7 +636,7 @@ function App() {
 
 ---
 
-## Props Flow
+### Props Flow
 
 ```text
 Parent Component
@@ -648,7 +648,7 @@ Child Component
 
 ---
 
-## Props are Immutable
+### Props are Immutable
 
 ❌ Wrong
 
@@ -660,7 +660,7 @@ Props should never be modified.
 
 ---
 
-# Default Props
+## Default Props
 
 Default props provide fallback values.
 
@@ -672,7 +672,7 @@ function Button({ text = "Click" }) {
 
 ---
 
-# Children Props
+## Children Props
 
 Components can receive nested elements using `children`.
 
@@ -692,7 +692,7 @@ Usage:
 
 ---
 
-# Callback Props
+## Callback Props
 
 Functions can also be passed as props.
 
@@ -704,7 +704,7 @@ function Child({ handleClick }) {
 
 ---
 
-# Props Drilling
+## Props Drilling
 
 Passing props through multiple components is called props drilling.
 
@@ -716,7 +716,7 @@ Large applications often solve this using Context API or state management librar
 
 ---
 
-# 11. What is State?
+## 11. What is State?
 
 State is data managed inside a component.
 
@@ -724,7 +724,7 @@ When state changes, React re-renders the component.
 
 ---
 
-## Example
+### Example
 
 ```jsx
 import { useState } from "react";
@@ -742,9 +742,9 @@ function Counter() {
 
 ---
 
-## Important State Rules
+### Important State Rules
 
-### Never Mutate State Directly
+#### Never Mutate State Directly
 
 ❌ Wrong
 
@@ -760,19 +760,19 @@ setCount(count + 1);
 
 ---
 
-### State Updates Trigger Re-render
+#### State Updates Trigger Re-render
 
 React automatically updates the UI after state changes.
 
 ---
 
-### State is Local
+#### State is Local
 
 Each component has its own independent state.
 
 ---
 
-# Why State Updates are Async
+## Why State Updates are Async
 
 React batches state updates for performance optimization.
 
@@ -785,7 +785,7 @@ Updates may not happen immediately.
 
 ---
 
-# Functional Updates
+## Functional Updates
 
 ```jsx
 setCount((prev) => prev + 1);
@@ -795,13 +795,13 @@ Useful when new state depends on previous state.
 
 ---
 
-# Immutability in React
+## Immutability in React
 
 React relies on reference comparison.
 
 ---
 
-## Wrong Way
+### Wrong Way
 
 ```js
 user.name = "React";
@@ -809,7 +809,7 @@ user.name = "React";
 
 ---
 
-## Correct Way
+### Correct Way
 
 ```jsx
 setUser({
@@ -820,13 +820,13 @@ setUser({
 
 ---
 
-# 12. Event Handling in React
+## 12. Event Handling in React
 
 React handles events using camelCase syntax.
 
 ---
 
-## Example
+### Example
 
 ```jsx
 <button onClick={handleClick}>
@@ -836,7 +836,7 @@ React handles events using camelCase syntax.
 
 ---
 
-## Event Object
+### Event Object
 
 ```jsx
 function handleClick(event) {
@@ -846,7 +846,7 @@ function handleClick(event) {
 
 ---
 
-## preventDefault()
+### preventDefault()
 
 ```jsx
 function handleSubmit(e) {
@@ -858,7 +858,7 @@ Prevents default browser behavior.
 
 ---
 
-## stopPropagation()
+### stopPropagation()
 
 ```jsx
 function handleClick(e) {
@@ -870,15 +870,15 @@ Stops event bubbling.
 
 ---
 
-# Synthetic Events
+## Synthetic Events
 
 React wraps browser events inside SyntheticEvent objects for cross-browser consistency.
 
 ---
 
-# 13. Forms in React
+## 13. Forms in React
 
-# Controlled Components
+## Controlled Components
 
 React controls form data using state.
 
@@ -897,7 +897,7 @@ function App() {
 
 ---
 
-# Uncontrolled Components
+## Uncontrolled Components
 
 DOM handles form state directly.
 
@@ -907,7 +907,7 @@ DOM handles form state directly.
 
 ---
 
-# 14. Props vs State
+## 14. Props vs State
 
 | Feature | Props | State |
 |---|---|---|
@@ -919,13 +919,13 @@ DOM handles form state directly.
 
 ---
 
-# 15. React Fragments
+## 15. React Fragments
 
 Fragments allow grouping multiple elements without adding extra DOM nodes.
 
 ---
 
-## Without Fragment
+### Without Fragment
 
 ```jsx
 <div>
@@ -936,7 +936,7 @@ Fragments allow grouping multiple elements without adding extra DOM nodes.
 
 ---
 
-## With Fragment
+### With Fragment
 
 ```jsx
 <>
@@ -947,7 +947,7 @@ Fragments allow grouping multiple elements without adding extra DOM nodes.
 
 ---
 
-## Full Syntax
+### Full Syntax
 
 ```jsx
 <React.Fragment>
@@ -957,13 +957,13 @@ Fragments allow grouping multiple elements without adding extra DOM nodes.
 
 ---
 
-# 16. How React Rendering Works
+## 16. How React Rendering Works
 
 Rendering means converting React components into UI elements.
 
 ---
 
-## Rendering Flow
+### Rendering Flow
 
 ```text
 State/Props Change
@@ -979,7 +979,7 @@ DOM Updated Efficiently
 
 ---
 
-## Important Point
+### Important Point
 
 React does not reload the full page.
 
@@ -987,7 +987,7 @@ Only required UI parts are updated.
 
 ---
 
-## Re-render Triggers
+### Re-render Triggers
 
 - State changes
 - Props changes
@@ -996,21 +996,21 @@ Only required UI parts are updated.
 
 ---
 
-# React Rendering Phases
+## React Rendering Phases
 
-# Render Phase
+## Render Phase
 
 React creates Virtual DOM and calculates UI changes.
 
 ---
 
-# Commit Phase
+## Commit Phase
 
 React updates the Real DOM.
 
 ---
 
-# Parent and Child Re-rendering
+## Parent and Child Re-rendering
 
 When a parent component re-renders:
 
@@ -1019,7 +1019,7 @@ When a parent component re-renders:
 
 ---
 
-# 17. What is Reconciliation?
+## 17. What is Reconciliation?
 
 Reconciliation is React’s process of comparing old and new Virtual DOM trees.
 
@@ -1027,7 +1027,7 @@ React determines the minimum DOM changes required.
 
 ---
 
-## Example
+### Example
 
 Old UI:
 
@@ -1045,7 +1045,7 @@ React updates only the text content.
 
 ---
 
-## Goals of Reconciliation
+### Goals of Reconciliation
 
 - Minimize DOM operations
 - Improve performance
@@ -1053,15 +1053,15 @@ React updates only the text content.
 
 ---
 
-# 18. React Diffing Algorithm
+## 18. React Diffing Algorithm
 
 React uses an optimized diffing algorithm to compare Virtual DOM trees efficiently.
 
 ---
 
-## React Assumptions
+### React Assumptions
 
-### Different Element Types Produce Different Trees
+#### Different Element Types Produce Different Trees
 
 ```jsx
 <div />
@@ -1077,13 +1077,13 @@ React destroys the old tree and creates a new one.
 
 ---
 
-### Keys Help Identify Elements
+#### Keys Help Identify Elements
 
 Keys help React track list items during updates.
 
 ---
 
-## Time Complexity
+### Time Complexity
 
 Traditional deep comparison:
 
@@ -1099,13 +1099,13 @@ O(n)
 
 ---
 
-# 19. Keys in React Lists
+## 19. Keys in React Lists
 
 Keys are unique identifiers used in lists.
 
 ---
 
-## Example
+### Example
 
 ```jsx
 const users = ["A", "B", "C"];
@@ -1117,7 +1117,7 @@ users.map((user, index) => (
 
 ---
 
-## Why Keys Are Important
+### Why Keys Are Important
 
 Keys help React:
 
@@ -1128,7 +1128,7 @@ Keys help React:
 
 ---
 
-## Best Practices
+### Best Practices
 
 ✅ Use stable unique IDs
 
@@ -1150,7 +1150,7 @@ key={index}
 
 ---
 
-## Problems with Index Keys
+### Problems with Index Keys
 
 - Incorrect UI updates
 - State mismatch
@@ -1158,7 +1158,7 @@ key={index}
 
 ---
 
-# 20. React Rendering Flow Summary
+## 20. React Rendering Flow Summary
 
 ```text
 Component Render
@@ -1178,45 +1178,45 @@ UI Updated
 
 ---
 
-# 21. Best Practices
+## 21. Best Practices
 
-## Keep Components Small
+### Keep Components Small
 
 Smaller components are easier to reuse and maintain.
 
 ---
 
-## Prefer Functional Components
+### Prefer Functional Components
 
 Modern React primarily uses hooks-based functional components.
 
 ---
 
-## Avoid Direct DOM Manipulation
+### Avoid Direct DOM Manipulation
 
 React should control the UI updates.
 
 ---
 
-## Use Proper Keys
+### Use Proper Keys
 
 Always use stable and unique keys.
 
 ---
 
-## Never Mutate State
+### Never Mutate State
 
 Always create new state values instead of modifying existing ones.
 
 ---
 
-## Keep UI Declarative
+### Keep UI Declarative
 
 Describe UI based on current state and props.
 
 ---
 
-# 22. React Strict Mode
+## 22. React Strict Mode
 
 StrictMode helps detect potential issues during development.
 
@@ -1228,7 +1228,7 @@ StrictMode helps detect potential issues during development.
 
 ---
 
-## Important Notes
+### Important Notes
 
 - Development-only feature
 - May intentionally double invoke some functions
@@ -1236,7 +1236,7 @@ StrictMode helps detect potential issues during development.
 
 ---
 
-# 23. React Developer Tools
+## 23. React Developer Tools
 
 React Developer Tools browser extension helps developers:
 
@@ -1247,9 +1247,9 @@ React Developer Tools browser extension helps developers:
 
 ---
 
-# 24. Common Beginner Mistakes
+## 24. Common Beginner Mistakes
 
-## Mutating State Directly
+### Mutating State Directly
 
 ❌ Wrong
 
@@ -1259,32 +1259,32 @@ user.name = "New";
 
 ---
 
-## Using Index as Key Everywhere
+### Using Index as Key Everywhere
 
 Can create rendering bugs in dynamic lists.
 
 ---
 
-## Forgetting Single Parent Element
+### Forgetting Single Parent Element
 
 JSX must return one parent wrapper.
 
 ---
 
-## Confusing Props and State
+### Confusing Props and State
 
 - Props → External Data
 - State → Internal Data
 
 ---
 
-## Writing Too Much Logic Inside JSX
+### Writing Too Much Logic Inside JSX
 
 Keep JSX clean and readable.
 
 ---
 
-# Infinite Re-renders
+## Infinite Re-renders
 
 ❌ Wrong
 
@@ -1304,7 +1304,7 @@ This executes immediately during render.
 
 ---
 
-# Direct DOM Manipulation
+## Direct DOM Manipulation
 
 ❌ Avoid:
 
@@ -1316,7 +1316,7 @@ React should control the UI whenever possible.
 
 ---
 
-# 25. Final Summary
+## 25. Final Summary
 
 React is a modern JavaScript library for building fast and scalable user interfaces.
 

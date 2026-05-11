@@ -820,5 +820,3 @@ Nothing renders.
 - Fragment
 - Parent/Child Rendering
 - Edge Cases
-
-```
