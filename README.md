@@ -13,7 +13,7 @@ This repository is built for:
 
 ---
 
-# 🚀 What Makes This Repository Different?
+## 🚀 What Makes This Repository Different?
 
 Most React interview repositories are:
 
@@ -28,7 +28,7 @@ Most React interview repositories are:
 
 This repository focuses on practical React learning with interview-oriented depth.
 
-## ✅ What You'll Learn
+### ✅ What You'll Learn
 
 - Strong React Fundamentals
 - Deep Dive into React Hooks
@@ -44,7 +44,7 @@ This repository focuses on practical React learning with interview-oriented dept
 
 ---
 
-# 📚 Main React Topics
+## 📚 Main React Topics
 
 | No | Topic | Notes | Tricky Output Questions |
 |----|-------|-------|--------------------------|
@@ -64,7 +64,7 @@ This repository focuses on practical React learning with interview-oriented dept
 
 ---
 
-# 🌐 React Ecosystem Topics
+## 🌐 React Ecosystem Topics
 
 | No | Topic | Notes | Tricky Output Questions |
 |----|-------|-------|--------------------------|
@@ -77,7 +77,7 @@ This repository focuses on practical React learning with interview-oriented dept
 
 ---
 
-# 📂 Repository Structure
+## 📂 Repository Structure
 
 ```bash
 React-Interview-Series/
@@ -99,9 +99,9 @@ React-Interview-Series/
 
 ---
 
-# 🧠 What This Repository Covers
+## 🧠 What This Repository Covers
 
-## 📌 Conceptual Learning
+### 📌 Conceptual Learning
 
 - React Fundamentals
 - JSX & Rendering
@@ -110,7 +110,7 @@ React-Interview-Series/
 - Context API
 - State Management
 
-## 📌 Advanced React
+### 📌 Advanced React
 
 - Reconciliation
 - Fiber Architecture
@@ -119,7 +119,7 @@ React-Interview-Series/
 - Strict Mode
 - Memoization
 
-## 📌 Performance Optimization
+### 📌 Performance Optimization
 
 - React.memo
 - useMemo
@@ -128,7 +128,7 @@ React-Interview-Series/
 - Code Splitting
 - Virtualization
 
-## 📌 Frontend Architecture
+### 📌 Frontend Architecture
 
 - Folder Structure
 - Scalable Project Design
@@ -136,7 +136,7 @@ React-Interview-Series/
 - Reusable Components
 - Feature-Based Architecture
 
-## 📌 Real Interview Preparation
+### 📌 Real Interview Preparation
 
 - Tricky Output Questions
 - Debugging Questions
@@ -146,39 +146,39 @@ React-Interview-Series/
 
 ---
 
-# 🎯 Best Way To Use This Repository
+## 🎯 Best Way To Use This Repository
 
-## Step 1 — Learn the Concepts
+### Step 1 — Learn the Concepts
 
 Read the `notes.md` file thoroughly.
 
-## Step 2 — Build Small Components
+### Step 2 — Build Small Components
 
 Implement concepts practically.
 
-## Step 3 — Solve Tricky Questions
+### Step 3 — Solve Tricky Questions
 
 Practice output-based and scenario-based questions.
 
-## Step 4 — Understand React Rendering
+### Step 4 — Understand React Rendering
 
 Focus on reconciliation, rendering flow, and hooks behavior.
 
-## Step 5 — Practice Debugging
+### Step 5 — Practice Debugging
 
 Debug common React mistakes and rendering issues.
 
-## Step 6 — Build Mini Projects
+### Step 6 — Build Mini Projects
 
 Apply concepts in real-world React applications.
 
-## Step 7 — Revise Frequently
+### Step 7 — Revise Frequently
 
 Consistency is the key to mastering React interviews.
 
 ---
 
-# 🔥 Popular React Interview Topics
+## 🔥 Popular React Interview Topics
 
 - React Hooks Interview Questions
 - useEffect Deep Dive
@@ -195,7 +195,7 @@ Consistency is the key to mastering React interviews.
 
 ---
 
-# 💡 Ideal For
+## 💡 Ideal For
 
 - React Developers
 - Frontend Engineers
@@ -207,7 +207,7 @@ Consistency is the key to mastering React interviews.
 
 ---
 
-# 🤝 Contributions
+## 🤝 Contributions
 
 Contributions are welcome and appreciated.
 
@@ -223,7 +223,7 @@ You can contribute by:
 
 ---
 
-# ⭐ Support
+## ⭐ Support
 
 If this repository helps you in your React journey, consider giving it a star ⭐ on GitHub.
 
