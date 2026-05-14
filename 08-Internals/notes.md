@@ -1,1185 +1,605 @@
-#  React Internals
+# React Internals
 
-##  Table of Contents
+## Table of Contents
 
-1. [How React Works](#1-how-react-works)
-2. [JSX Internals](#2-jsx-internals)
-3. [Virtual DOM](#3-virtual-dom)
-4. [Reconciliation](#4-reconciliation)
-5. [Fiber Architecture](#5-fiber-architecture)
-6. [Render vs Commit Phase](#6-render-vs-commit-phase)
-7. [Scheduler](#7-scheduler)
-8. [Batching](#8-batching)
-9. [Hook Internals](#9-hook-internals)
-10. [Concurrent Rendering](#10-concurrent-rendering)
-11. [Suspense & Hydration](#11-suspense--hydration)
+- [1. React Architecture Overview](#1-react-architecture-overview)
+- [2. React Element & JSX](#2-react-element--jsx)
+- [3. Fiber Architecture](#3-fiber-architecture)
+- [4. Rendering Phases](#4-rendering-phases)
+- [5. Reconciliation](#5-reconciliation)
+- [6. Diffing Algorithm](#6-diffing-algorithm)
+- [7. Keys & Element Identity](#7-keys--element-identity)
+- [8. Batching](#8-batching)
+- [9. Scheduling & Priorities](#9-scheduling--priorities)
+- [10. DevTools & Debugging](#10-devtools--debugging)
 
 ---
 
-##  1. How React Works
+## 1. React Architecture Overview
 
-React is a JavaScript UI library that converts components into efficient DOM updates.
+React's modern architecture (v16+) uses an advanced system to manage rendering efficiently.
 
-Most developers think React directly updates the DOM whenever state changes.
+---
 
-That is NOT what actually happens internally.
+### Core Components
 
-React works in multiple stages.
+**React Core:** Maintains component tree, state, and props.
 
-Complete React internal pipeline:
+**ReactDOM:** Renders React components to the browser DOM.
 
-```txt
-JSX
- ↓
-React.createElement()
- ↓
-React Elements
- ↓
-Virtual DOM
- ↓
-Fiber Tree
- ↓
-Render Phase
- ↓
-Diffing
- ↓
-Reconciliation
- ↓
-Commit Phase
- ↓
-Real DOM Update
+**React Events:** Synthetic event system with event delegation.
+
+---
+
+### Three Main Phases
+
+```
+Render Phase (Reconciliation)
+         ↓
+Commit Phase (Update DOM)
+         ↓
+Layout & Passive Effects (Browser)
 ```
 
 ---
 
-###  Step 1 — JSX is Written
+## 2. React Element & JSX
 
-Example:
+### React Element
 
-```jsx
-function App() {
-  return <h1>Hello React</h1>;
-}
-```
-
-Browser cannot understand JSX directly.
-
-JSX is transformed into JavaScript.
-
----
-
-###  Step 2 — JSX Becomes React Elements
-
-Babel converts JSX into:
-
-```js
-React.createElement(
-  "h1",
-  null,
-  "Hello React"
-);
-```
-
-This creates a React Element object.
-
-Example:
+A React Element is a plain JavaScript object describing what to render:
 
 ```js
 {
   type: "h1",
+  key: null,
   props: {
-    children: "Hello React"
-  }
-}
-```
-
-React Elements are:
-- plain JavaScript objects
-- immutable
-- lightweight UI descriptions
-
-They are NOT DOM nodes.
-
----
-
-###  Step 3 — Virtual DOM Tree Creation
-
-React converts React Elements into a Virtual DOM tree.
-
-Example:
-
-```txt
-App
- └── h1
-      └── "Hello React"
-```
-
-This tree exists entirely in memory.
-
----
-
-###  Step 4 — Fiber Tree Creation
-
-React creates Fiber Nodes from the Virtual DOM.
-
-Fiber is React's internal data structure.
-
-Each component becomes a Fiber Node.
-
-Example:
-
-```txt
-App Fiber
- └── h1 Fiber
-```
-
----
-
-###  Step 5 — Render Phase Starts
-
-React starts calculating:
-- what changed
-- what needs updating
-- which components re-render
-
-This phase:
-- can pause
-- can restart
-- can abort
-
-NO DOM updates happen here.
-
----
-
-###  Step 6 — Reconciliation & Diffing
-
-React compares:
-- old Virtual DOM
-- new Virtual DOM
-
-Then determines:
-- additions
-- deletions
-- updates
-
----
-
-###  Step 7 — Commit Phase
-
-After calculations complete:
-
-React updates the Real DOM.
-
-This phase:
-- cannot pause
-- is synchronous
-
----
-
-###  Step 8 — Browser Paint
-
-Finally browser:
-- recalculates layout
-- repaints screen
-
-User sees updated UI.
-
----
-
-##  React Mental Model
-
-Think of React as:
-
-```txt
-React =
-Rendering Engine
-+ Scheduler
-+ Reconciliation Engine
-+ State Manager
-```
-
----
-
-##  2. JSX Internals
-
-JSX is NOT HTML.
-
-JSX is syntax sugar over JavaScript.
-
----
-
-###  JSX Example
-
-```jsx
-const element = <h1>Hello</h1>;
-```
-
-Babel transforms it into:
-
-```js
-const element = React.createElement(
-  "h1",
-  null,
-  "Hello"
-);
-```
-
----
-
-###  React.createElement Structure
-
-```js
-React.createElement(
-  type,
-  props,
-  children
-);
-```
-
-Example:
-
-```js
-React.createElement(
-  "button",
-  {
-    className: "btn"
-  },
-  "Click"
-);
-```
-
----
-
-###  JSX Compilation
-
-Compilation happens using:
-- Babel
-- TypeScript compiler
-- SWC
-
-Browser never sees JSX directly.
-
----
-
-###  JSX Returns Objects
-
-JSX becomes:
-
-```js
-{
-  type: "button",
-  props: {
-    className: "btn",
-    children: "Click"
-  }
-}
-```
-
----
-
-###  Why JSX Exists
-
-Without JSX:
-
-```js
-React.createElement(
-  "div",
-  null,
-  React.createElement(
-    "h1",
-    null,
-    "Hello"
-  )
-);
-```
-
-Very hard to read.
-
-JSX improves readability.
-
----
-
-##  3. Virtual DOM
-
-Virtual DOM is a lightweight JavaScript representation of the UI.
-
-It is NOT the actual browser DOM.
-
----
-
-##  Real DOM Problem
-
-Direct DOM updates are expensive.
-
-Browser operations include:
-- layout calculation
-- repaint
-- reflow
-
-Frequent updates hurt performance.
-
----
-
-##  Virtual DOM Solution
-
-React creates a virtual copy in memory.
-
-Example:
-
-```txt
-Virtual DOM
-
-App
- ├── Header
- ├── Sidebar
- └── Content
-```
-
-React updates memory first instead of browser DOM.
-
----
-
-##  How Virtual DOM Works
-
-Example:
-
-```jsx
-<h1>Hello</h1>
-```
-
-becomes:
-
-```js
-{
-  type: "h1",
-  props: {
+    className: "title",
     children: "Hello"
   }
 }
 ```
 
-React compares:
-- old tree
-- new tree
-
-Then updates only changed parts.
-
 ---
 
-##  Benefits of Virtual DOM
+### JSX Compilation
 
-###  Efficient Updates
-
-Only changed nodes updated.
-
----
-
-###  Faster Comparisons
-
-JavaScript object comparison is faster than DOM manipulation.
-
----
-
-###  Declarative UI
-
-Developer describes:
-- WHAT UI should look like
-
-React handles:
-- HOW updates happen
-
----
-
-##  Important Misconception
-
-Virtual DOM itself is NOT the optimization.
-
-The real optimization is:
-- diffing
-- reconciliation
-- batching
-- efficient scheduling
-
----
-
-##  4. Reconciliation
-
-Reconciliation is React’s process of:
-- comparing trees
-- finding differences
-- determining minimal updates
-
----
-
-##  Why Reconciliation Exists
-
-Re-rendering entire DOM is expensive.
-
-React instead:
-- compares trees
-- updates only changed nodes
-
----
-
-##  Diffing Algorithm
-
-React uses heuristics.
-
-Full tree comparison complexity:
-
-```txt
-O(n³)
-```
-
-React optimized it to approximately:
-
-```txt
-O(n)
-```
-
-using assumptions.
-
----
-
-##  Rule 1 — Different Element Types
+JSX is transpiled to function calls:
 
 ```jsx
-<div />
-<span />
-```
+// JSX
+<h1 className="title">Hello</h1>
 
-React destroys old subtree completely.
+// Transpiled
+React.createElement("h1", { className: "title" }, "Hello")
+```
 
 ---
 
-##  Rule 2 — Same Element Types
+### Modern JSX Transform (React 17+)
+
+React 17 introduced automatic JSX transformation:
 
 ```jsx
-<div className="a" />
-<div className="b" />
+// No need to import React anymore
+function App() {
+  return <h1>Hello</h1>;
+}
 ```
-
-React updates only changed attributes.
 
 ---
 
-##  Rule 3 — Component Types
+## 3. Fiber Architecture
+
+Fiber is React's internal data structure representing each node in the component tree.
+
+---
+
+### What is a Fiber?
+
+A Fiber object stores:
+
+- Component type and instance
+- Props, state, and hooks
+- Parent, sibling, child references
+- Work to be done
+- Side effects to run
+
+---
+
+### Fiber Tree
+
+React maintains a parallel Fiber tree alongside the component tree:
+
+```
+Component Tree    →    Fiber Tree
+    App          →    App Fiber
+   /   \              /      \
+  Nav  Main    →   Nav Fiber Main Fiber
+```
+
+---
+
+### Why Fibers?
+
+**Problems solved:**
+
+1. **Prioritization:** High-priority updates can interrupt low-priority work
+2. **Pausable work:** Rendering can be paused and resumed
+3. **Reusable work:** Work can be discarded if higher-priority update arrives
+4. **Error boundaries:** Better error handling and recovery
+
+---
+
+## 4. Rendering Phases
+
+React rendering has two phases: Render and Commit.
+
+---
+
+### Render Phase (Reconciliation)
+
+The Render Phase is where React:
+
+1. Traverses the Fiber tree
+2. Calls component functions
+3. Creates/updates Fibers
+4. Calculates what changed
+
+**Important:** This phase doesn't mutate the DOM and can be paused or restarted.
+
+---
+
+### Commit Phase
+
+The Commit Phase applies changes:
+
+1. Updates the Real DOM
+2. Runs lifecycle methods
+3. Updates refs
+4. Runs effects
+
+**Important:** This phase is synchronous and cannot be interrupted.
+
+---
+
+### Render Phase Steps
+
+```
+Start Render
+   ↓
+Process Fiber
+   ↓
+Call Component Function
+   ↓
+Reconcile with Previous Fiber
+   ↓
+Create Effects List
+   ↓
+Move to Next Fiber
+   ↓
+Complete Work
+```
+
+---
+
+### Commit Phase Steps
+
+```
+Before Mutations
+   ↓
+Mutations (Update DOM)
+   ↓
+Layout Phase
+   ↓
+Passive Effects (useEffect)
+```
+
+---
+
+## 5. Reconciliation
+
+Reconciliation is the process of determining what changed between renders.
+
+---
+
+### Reconciliation Rules
+
+**Rule 1: Different Element Types**
+
+If the element type changes, React destroys the old tree and creates a new one:
 
 ```jsx
-<App />
+// Before
+<div>Content</div>
+
+// After
+<span>Content</span>
 ```
 
-Same component:
-- preserve state
-
-Different component:
-- remount component
+React destroys the entire div subtree.
 
 ---
 
-##  Rule 4 — Keys
+**Rule 2: Same Element Type with Key**
 
-Keys help React identify list items.
-
-Good:
+If elements are the same type and have keys, React matches by key:
 
 ```jsx
-items.map(item => (
-  <Item key={item.id} />
-))
+// Before
+<li key="a">A</li>
+<li key="b">B</li>
+
+// After
+<li key="b">B</li>
+<li key="a">A</li>
 ```
 
-Bad:
-
-```jsx
-items.map((item, index) => (
-  <Item key={index} />
-))
-```
+React reorders them without destroying.
 
 ---
 
-##  Why Index Keys Are Problematic
+## 6. Diffing Algorithm
 
-When list order changes:
-- React mismatches items
-- state bugs occur
-- unnecessary re-renders happen
+React uses a heuristic-based algorithm to efficiently compare trees.
 
 ---
 
-##  5. Fiber Architecture
+### Algorithm Heuristics
 
-Fiber is React’s internal reconciliation engine.
-
-Introduced in:
-- React 16
-
----
-
-##  Why Fiber Was Introduced
-
-Old React Stack Reconciler was:
-- synchronous
-- blocking
-- non-interruptible
-
-Large rendering operations could freeze UI.
-
----
-
-##  Fiber Solves This
-
-Fiber enables:
-- interruptible rendering
-- prioritization
-- scheduling
-- concurrent rendering
-
----
-
-##  Fiber Node Structure
-
-Simplified Fiber:
+**1. Compare by type:** Different types = different trees.
 
 ```js
-const fiber = {
-  type,
-  stateNode,
-  child,
-  sibling,
-  return,
-  alternate,
-  pendingProps,
-  memoizedProps,
-  memoizedState,
+if (oldElement.type !== newElement.type) {
+  // Destroy old tree, create new
 }
 ```
 
----
-
-##  Important Fiber Links
-
-###  child
-
-First child.
-
----
-
-###  sibling
-
-Next sibling.
-
----
-
-###  return
-
-Parent node.
-
----
-
-##  Fiber Tree Example
-
-```txt
-App
- ├── Header
- ├── Sidebar
- └── Content
-```
-
-Internally:
-
-```txt
-Fiber(App)
-  ↓ child
-Fiber(Header)
-  ↓ sibling
-Fiber(Sidebar)
-  ↓ sibling
-Fiber(Content)
-```
-
----
-
-##  Work In Progress Tree
-
-React maintains:
-
-```txt
-1. Current Tree
-2. Work In Progress Tree
-```
-
-Updates happen on:
-- Work In Progress Tree
-
-After completion:
-- trees swap
-
-This technique is called:
-
-```txt
-Double Buffering
-```
-
----
-
-##  Fiber Enables Interruption
-
-React can:
-- pause rendering
-- resume later
-- prioritize urgent updates
-
----
-
-##  6. Render vs Commit Phase
-
-React rendering has 2 phases.
-
----
-
-##  Render Phase
-
-Purpose:
-- calculate updates
-- create Work In Progress tree
-- diff Virtual DOM
-
-NO DOM updates happen here.
-
----
-
-##  Render Phase Characteristics
-
-Render phase:
-- asynchronous
-- interruptible
-- restartable
-- pure
-
----
-
-##  Commit Phase
-
-Purpose:
-- update DOM
-- execute effects
-- attach refs
-
----
-
-##  Commit Phase Characteristics
-
-Commit phase:
-- synchronous
-- non-interruptible
-
----
-
-##  Internal Flow
-
-```txt
-State Update
- ↓
-Render Phase
- ↓
-Diffing
- ↓
-Reconciliation
- ↓
-Commit Phase
- ↓
-DOM Updates
-```
-
----
-
-##  Important Rule
-
-Never cause side effects during render.
-
-Bad:
-
-```jsx
-fetch("/api");
-```
-
-inside component body.
-
----
-
-##  7. Scheduler
-
-Scheduler determines:
-- when work runs
-- which work is important
-
----
-
-##  Why Scheduler Exists
-
-Not all updates are equally important.
-
-Example:
-
-```txt
-Typing Input → High Priority
-Analytics Logging → Low Priority
-```
-
----
-
-##  Scheduler Responsibilities
-
-Scheduler:
-- prioritizes work
-- pauses work
-- resumes work
-- avoids blocking UI
-
----
-
-##  Priority Levels
-
-Examples:
-
-```txt
-Immediate Priority
-User Blocking Priority
-Normal Priority
-Low Priority
-Idle Priority
-```
-
----
-
-##  React Lanes
-
-React internally uses:
-- lanes
-
-Lanes represent update priorities.
-
----
-
-##  Example
-
-```txt
-Typing → Sync Lane
-Transition → Transition Lane
-```
-
----
-
-##  Scheduler Goal
-
-Keep UI responsive.
-
----
-
-##  8. Batching
-
-React batches multiple state updates together.
-
----
-
-##  Example
-
-```jsx
-setCount(c => c + 1);
-setCount(c => c + 1);
-```
-
-Result:
-
-```txt
-+2
-```
-
----
-
-##  Stale Closure Example
-
-```jsx
-setCount(count + 1);
-setCount(count + 1);
-```
-
-Result:
-
-```txt
-+1
-```
-
-because both updates capture same value.
-
----
-
-##  Why Batching Exists
-
-Without batching:
-
-```txt
-Update
-Render
-Update
-Render
-Update
-Render
-```
-
-Too expensive.
-
----
-
-##  With Batching
-
-```txt
-Multiple Updates
- ↓
-Single Render
-```
-
-Efficient.
-
----
-
-##  Automatic Batching
-
-React 18 introduced broader automatic batching.
-
-Works across:
-- promises
-- timeouts
-- async operations
-
----
-
-##  9. Hook Internals
-
-Hooks are internally stored on Fiber nodes.
-
----
-
-##  Hook Order Matters
-
-React identifies hooks by:
-- execution order
-
-Bad:
-
-```jsx
-if (condition) {
-  useState();
-}
-```
-
-This breaks hook order.
-
----
-
-##  Internal Hook Storage
-
-Simplified:
-
-```txt
-Fiber
- ├── Hook1
- ├── Hook2
- └── Hook3
-```
-
----
-
-##  useState Internals
-
-Simplified idea:
+**2. Use keys for lists:** Keys help match elements.
 
 ```js
-function useState(initialValue) {
-  const hook = getCurrentHook();
-
-  return [
-    hook.state,
-    hook.dispatch
-  ];
+for (let newChild of newChildren) {
+  const oldChild = childrenByKey[newChild.key];
+  // Reconcile newChild with oldChild
 }
 ```
 
----
-
-##  State Update Queue
-
-Each hook has:
-- update queue
-
-Example:
-
-```txt
-Update1 → Update2 → Update3
-```
-
-React processes queue during render.
+**3. Compare depth-first:** Don't recursively compare deep trees.
 
 ---
 
-##  useEffect Internals
+### Time Complexity
 
-Effects run AFTER commit phase.
+Traditional tree diffing: **O(n³)**
 
-Flow:
+React's optimized diffing: **O(n)**
 
-```txt
-Render
- ↓
-Commit
- ↓
-Effect Runs
-```
+React achieves O(n) through:
 
-Cleanup flow:
-
-```txt
-Old Cleanup
- ↓
-New Effect
-```
+- One-level-at-a-time comparison
+- Key-based matching in lists
+- Assumption that siblings don't move across levels
 
 ---
 
-##  useMemo Internals
+## 7. Keys & Element Identity
 
-React stores:
-- cached value
-- dependency array
+### Purpose of Keys
 
-If dependencies unchanged:
-- return cached value
-
----
-
-##  useCallback Internals
-
-`useCallback` memoizes:
-- function reference
-
-Prevents unnecessary child renders.
-
----
-
-##  10. Concurrent Rendering
-
-Concurrent Rendering allows React to:
-- pause work
-- interrupt work
-- prioritize updates
-
----
-
-##  Old React Problem
-
-Large rendering tasks blocked UI.
-
-Example:
-- typing lag
-- frozen animations
-
----
-
-##  Concurrent Rendering Solution
-
-React can:
-- stop rendering
-- process urgent update
-- continue later
-
----
-
-##  Example
-
-```txt
-Large List Rendering
-        ↓ interrupted
-User Typing
-        ↓ processed immediately
-Resume List Rendering
-```
-
----
-
-##  startTransition
-
-React provides:
+Keys tell React which items changed, were added, or removed:
 
 ```jsx
-startTransition(() => {
-  setSearchResults(data);
+{items.map(item => (
+  <li key={item.id}>{item.text}</li>
+))}
+```
+
+---
+
+### How Keys Work
+
+React uses keys to match old and new elements:
+
+```
+Old: key="a" key="b" key="c"
+     Alice    Bob     Charlie
+
+New: key="c" key="a" key="b"
+     Charlie Alice   Bob
+
+React reorders without recreating DOM nodes.
+```
+
+---
+
+### Key Matching Process
+
+```jsx
+// Before
+<li key="1">A</li>
+<li key="2">B</li>
+
+// After
+<li key="2">B</li>
+<li key="1">A</li>
+
+// React matches by key:
+// - key="1" still exists, reuse its DOM node
+// - key="2" still exists, reuse its DOM node
+// - Just reorder them in the DOM
+```
+
+---
+
+### Why Index Keys Are Problematic
+
+```jsx
+{items.map((item, index) => (
+  <li key={index}>{item}</li>
+))}
+```
+
+Problems:
+
+- If list is filtered, index doesn't match the item
+- If items are reordered, component state gets mixed up
+- Performance degrades
+
+---
+
+### Best Practices for Keys
+
+✅ Use stable unique IDs:
+
+```jsx
+key={item.id}
+```
+
+❌ Don't use index in dynamic lists:
+
+```jsx
+key={index}  // Problems!
+```
+
+❌ Don't generate random keys:
+
+```jsx
+key={Math.random()}  // Wrong!
+```
+
+---
+
+## 8. Batching
+
+Batching groups multiple state updates into a single re-render.
+
+---
+
+### Automatic Batching in Event Handlers
+
+```jsx
+const handleClick = () => {
+  setCount(c => c + 1);
+  setName("React");
+  // React re-renders once with both updates
+};
+```
+
+---
+
+### Batching in React 18
+
+React 18 batches updates in more scenarios:
+
+```jsx
+// Event handler (batched)
+<button onClick={() => {
+  setCount(c => c + 1);
+  setName("React");
+}} />
+
+// Promise (batched in v18, not v17)
+fetch('/api').then(() => {
+  setCount(c => c + 1);
+});
+
+// setTimeout (batched in v18, not v17)
+setTimeout(() => {
+  setCount(c => c + 1);
+}, 0);
+```
+
+---
+
+### Opting Out of Batching
+
+Use `flushSync` for immediate updates:
+
+```jsx
+import { flushSync } from 'react-dom';
+
+const handleClick = () => {
+  flushSync(() => {
+    setCount(c => c + 1);
+  });
+  // count is updated synchronously here
+  console.log(count);
+};
+```
+
+---
+
+## 9. Scheduling & Priorities
+
+React uses a scheduler to prioritize updates based on urgency.
+
+---
+
+### Update Priorities
+
+**Immediate:** User interactions (clicks), errors
+
+**High:** Component updates from effects
+
+**Normal:** Data fetching, setTimeout
+
+**Low:** Non-urgent updates
+
+---
+
+### How Scheduling Works
+
+```
+Update Arrives
+   ↓
+Assign Priority
+   ↓
+Scheduler Queues Work
+   ↓
+High Priority? → Interrupt current work
+   ↓
+Process Update
+```
+
+---
+
+### Example: Interrupting Work
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0);
+  const [data, setData] = useState(null);
+
+  const handleClick = () => {
+    // High priority - user input
+    setCount(count + 1);
+  };
+
+  useEffect(() => {
+    // Low priority - background update
+    fetchData().then(setData);
+  }, []);
+
+  return (
+    <button onClick={handleClick}>
+      Count: {count}
+    </button>
+  );
+}
+```
+
+When clicking, React prioritizes count update even if data is still loading.
+
+---
+
+## 10. DevTools & Debugging
+
+### React DevTools Browser Extension
+
+Provides:
+
+- Component tree inspection
+- Props and state inspection
+- Performance profiling
+- Re-render tracking
+- Hook inspection
+
+---
+
+### Profiler API
+
+Measure component rendering performance:
+
+```jsx
+import { Profiler } from 'react';
+
+function onRender(id, phase, actualDuration, baseDuration) {
+  console.log(`${id} (${phase}) took ${actualDuration}ms`);
+}
+
+<Profiler id="App" onRender={onRender}>
+  <App />
+</Profiler>
+```
+
+---
+
+### React.StrictMode
+
+Development-only mode that highlights issues:
+
+```jsx
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+```
+
+Detects:
+
+- Unsafe lifecycle methods
+- Unexpected side effects
+- Missing dependencies
+- Deprecated patterns
+
+---
+
+### Performance Issues
+
+**Unnecessary re-renders:**
+
+- Parent re-renders trigger child re-renders
+- Use `React.memo` to prevent
+
+**Large component trees:**
+
+- Split into smaller components
+- Use code splitting
+
+**Expensive computations:**
+
+- Use `useMemo` to memoize
+- Move to worker threads
+
+**Memory leaks:**
+
+- Clean up effects
+- Remove event listeners
+- Cancel async operations
+
+---
+
+### Debugging Techniques
+
+**Check render count:**
+
+```jsx
+useEffect(() => {
+  console.count('render');
 });
 ```
 
-Marks update as:
-- non-urgent
+**Profile code:**
 
----
-
-##  Benefits
-
-Concurrent rendering improves:
-- responsiveness
-- smooth UI
-- user experience
-
----
-
-##  Important Note
-
-Concurrent Rendering is NOT multi-threading.
-
-JavaScript still runs on:
-- single thread
-
-React simply schedules work smarter.
-
----
-
-##  11. Suspense & Hydration
-
-##  Suspense
-
-Suspense allows React to:
-- pause rendering
-- show fallback UI
-- continue later
-
----
-
-##  Example
-
-```jsx
-<Suspense fallback={<Loader />}>
-  <Dashboard />
-</Suspense>
+```js
+console.time('operation');
+// code...
+console.timeEnd('operation');
 ```
 
----
+**Use React DevTools Profiler:**
 
-##  Suspense Flow
-
-```txt
-Component Suspends
- ↓
-Fallback UI Appears
- ↓
-Data Resolves
- ↓
-Component Continues Rendering
-```
+- Identify slow components
+- Find unnecessary re-renders
+- Measure rendering time
 
 ---
 
-##  Hydration
+## Performance Best Practices
 
-Hydration attaches React logic to server-rendered HTML.
-
----
-
-##  Why Hydration Exists
-
-Server-side rendering produces:
-- static HTML
-
-Hydration makes it interactive.
-
----
-
-##  Hydration Flow
-
-```txt
-Server Rendered HTML
- ↓
-Browser Loads JS
- ↓
-Hydration
- ↓
-Interactive React App
-```
-
----
-
-##  Hydration Mismatch
-
-Mismatch occurs when:
-- server output differs from client output
-
-Example:
-
-```jsx
-Math.random()
-Date.now()
-```
-
-during render.
-
----
-
-##  Streaming Hydration
-
-Modern React supports:
-- progressive hydration
-- selective hydration
-- streaming HTML
-
-Improves performance.
-
----
-
-##  Final React Internal Flow
-
-```txt
-JSX
- ↓
-createElement
- ↓
-React Elements
- ↓
-Virtual DOM
- ↓
-Fiber Tree
- ↓
-Scheduler
- ↓
-Render Phase
- ↓
-Diffing
- ↓
-Reconciliation
- ↓
-Commit Phase
- ↓
-DOM Updates
- ↓
-Effects
-```
-
----
-
-##  Final Mental Model
-
-Think of React as:
-
-```txt
-React =
-UI Engine
-+ Scheduler
-+ Reconciliation Engine
-+ State Manager
-+ Concurrent Rendering System
-```
-
-React continuously:
-- builds trees
-- compares trees
-- schedules updates
-- prioritizes rendering
-- synchronizes UI efficiently
+1. **Profile before optimizing** - Use DevTools Profiler
+2. **Avoid premature optimization** - Only optimize when needed
+3. **Use proper keys** - Helps reconciliation efficiency
+4. **Memoize strategically** - Don't memoize everything
+5. **Code split** - Load code on demand
+6. **Monitor bundle size** - Use webpack-bundle-analyzer
+7. **Lazy load routes** - Use React.lazy
